@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#332e72">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Suivi d'installation machine en équipe : tâches du jour à cocher, points bloquants et point du jour, partagés en direct.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Chantier">
+<title>Chantier partagé</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Poppins:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <header class="topbar" id="topbar"></header>
+  <nav class="onglets" id="onglets" aria-label="Sections de l'installation" hidden></nav>
+  <main class="contenu" id="contenu">
+    <section class="carte"><p class="vide-texte">Ouverture de l'application…</p></section>
+  </main>
+  <div class="barre-bas" id="barre-bas" hidden></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><p style="padding:16px">Cette application a besoin de JavaScript.</p></noscript>
+<!-- Configuration de VOTRE projet Firebase (voir README, étape 4) -->
+<script src="config-firebase.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

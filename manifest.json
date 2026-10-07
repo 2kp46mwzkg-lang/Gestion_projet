@@ -1,0 +1,18 @@
+{
+  "id": "chantier-partage",
+  "name": "Chantier partagé — suivi d'installation en équipe",
+  "short_name": "Chantier",
+  "description": "Tâches du jour à cocher, points bloquants et point du jour, partagés en direct par toute l'équipe. Fonctionne hors connexion.",
+  "lang": "fr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f5f6f9",
+  "theme_color": "#332e72",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

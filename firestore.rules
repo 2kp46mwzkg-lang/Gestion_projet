@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// =========================================================================
+// CHANTIER PARTAGÉ — règles de sécurité Firestore
+// -------------------------------------------------------------------------
+// À copier dans la console Firebase : Firestore Database → onglet « Règles »
+// → tout remplacer par ce fichier → « Publier » (README, étape 3).
+//
+// Principe : seules les personnes connectées avec une adresse e-mail VALIDÉE
+// et présente dans la liste « membres » lisent et modifient les données.
+// Le propriétaire (adresse ci-dessous) a toujours accès : c'est lui qui
+// ajoute les premières adresses depuis l'appli (Menu → Accès à l'appli).
+// =========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ATTENTION : REMPLACEZ cette adresse par la vôtre, en minuscules, avant de publier.
+    function proprietaire() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() == 'votre.adresse@exemple.fr';
+    }
+
+    function connecte() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    // Membre : son adresse figure dans membres/{adresse en minuscules}
+    function membre() {
+      return proprietaire() || (connecte()
+        && exists(/databases/$(database)/documents/membres/$(request.auth.token.email.lower())));
+    }
+
+    // Administrateur : membre dont la fiche porte role == 'admin'
+    function admin() {
+      return proprietaire() || (connecte()
+        && get(/databases/$(database)/documents/membres/$(request.auth.token.email.lower())).data.role == 'admin');
+    }
+
+    // Liste des adresses autorisées : lue par l'équipe, modifiée par les administrateurs
+    match /membres/{adresse} {
+      allow read: if membre();
+      allow write: if admin();
+    }
+
+    // Prénom et métier de chacun : lus par l'équipe, modifiés par la personne elle-même
+    match /equipe/{uid} {
+      allow read: if membre();
+      allow write: if membre() && request.auth.uid == uid;
+    }
+
+    // Installations et tout ce qu'elles contiennent (tâches, blocages, points du jour)
+    match /installations/{document=**} {
+      allow read, write: if membre();
+    }
+  }
+}
