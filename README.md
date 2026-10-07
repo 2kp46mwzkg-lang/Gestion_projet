@@ -1,113 +1,133 @@
-# Chantier partagé
+# Chantier partagé, version sans serveur
 
-**Suivi d'installation machine en équipe** : les tâches du jour à cocher, les points bloquants, le point du soir. Toute l'équipe voit et modifie les mêmes données, en direct, depuis son téléphone.
+**Suivi d'installation machine en équipe.** On coche les tâches du jour, on signale les points bloquants et, le soir, chacun envoie son avancement. Le chef de chantier rassemble tout et envoie le **point du soir en PDF**.
 
-Inspirée de BFR-Chantier (même charte, mêmes phases, mêmes gravités de blocage), avec une différence de fond : **les données sont partagées** entre plusieurs personnes, par une base Firebase.
+Comme BFR-Report et BFR-Chantier, **tout reste dans le téléphone**. Il n'y a ni base de données, ni compte, ni serveur. L'équipe se met à jour en **s'échangeant des fichiers ou des messages** (WhatsApp, Teams, e-mail, AirDrop…).
 
-- Application web installable sur l'écran d'accueil (iPhone et Android), hébergée sur **GitHub Pages**.
-- Données synchronisées en direct par **Firebase** (offre gratuite).
-- **Fonctionne hors connexion** une fois ouverte une première fois : les changements partent dès que le réseau revient.
-- **Accès par e-mail** : seules les adresses que vous autorisez entrent, après validation de leur adresse.
+- C'est une application web installable sur l'écran d'accueil (iPhone et Android), hébergée gratuitement sur **GitHub Pages**.
+- Elle **fonctionne sans réseau** après une première ouverture.
+- Elle reprend la charte, les phases, les gravités de blocage et le **moteur PDF de BFR-Chantier**.
 
 ---
 
-## Ce que fait l'application
+## Le principe en une minute
 
-| Écran | Contenu |
+1. **Le chef de chantier crée le projet** et l'envoie au groupe de l'équipe (onglet **Équipe**, **Envoyer le projet à l'équipe**).
+2. **Chacun l'importe** avec le bouton **Recevoir** et choisit son rôle : mécanicien, câbleur, automaticien… Les tâches de son métier s'affichent en premier.
+3. **Dans la journée**, chacun coche ses tâches, prend une tâche « En cours » et signale ce qui bloque, en indiquant **qui peut le lever**. Tout cela marche sans réseau.
+4. **Le soir**, chacun touche **Mon avancement**. L'appli choisit le destinataire selon la règle ci-dessous.
+5. **Le chef importe les avancements**, plusieurs d'un coup s'il le veut. Il ajoute sa synthèse, envoie le **point du soir en PDF**, puis **renvoie le projet à jour** à l'équipe. Chacun repart ainsi le lendemain de la même base.
+
+---
+
+## La règle d'envoi du soir
+
+| Situation de la personne qui envoie | À | Copie |
+|---|---|---|
+| Aucun point bloquant ouvert à son nom | Chef de chantier | — |
+| Blocage que seul le **chef d'atelier** peut lever | Chef d'atelier | Chef de chantier |
+| Blocage pour le **BE électrotechnique** | Responsable BE électrotechnique | Chef de chantier |
+| Blocage pour le **bureau automatisme** | Chef bureau automatisme | Chef de chantier |
+| Blocage **client**, **fournisseur** ou **chargé d'affaire** | Chargé d'affaire, qui fait le lien | Chef de chantier |
+| Blocage **autre corps d'état** ou **chef de chantier** | Chef de chantier | — |
+
+- **Le chef en copie** est activé par défaut, car il a besoin de tous les avancements pour son point du soir. Il peut couper cette copie : onglet **Équipe**, case **Mettre le chef en copie…**. Le réglage part avec le projet et s'applique chez chacun après le prochain échange.
+- **Les adresses des responsables** sont saisies par le chef dans **Équipe**, **Responsables**, **Modifier**. Elles voyagent avec le projet. Si un responsable rejoint lui-même le projet, l'adresse qu'il saisit passe en priorité.
+- Dès que le blocage est **levé**, l'avancement repart au chef de chantier seul.
+- L'écran d'envoi montre toujours **À** et **Copie** avant d'envoyer. Le bouton **Copier les adresses** permet de les coller dans WhatsApp, Teams ou la messagerie.
+
+---
+
+## Comment voyagent les données
+
+**Ce qui part.** Chaque envoi contient **le projet complet tel que le téléphone le connaît**. Il prend la forme d'un fichier `.txt` lisible : en tête, qui envoie, quand et un résumé, puis un **code** qui contient tout le projet compressé. Le format `.txt` a une raison : Chrome sur Android refuse de partager les fichiers `.json`.
+
+**À l'import, l'appli fusionne champ par champ** et garde la modification la plus récente. Conséquences :
+- l'ordre des imports n'a pas d'importance, et importer deux fois le même fichier ne fait rien ;
+- un fichier perdu n'a rien de grave, car le suivant contient tout ;
+- deux personnes qui modifient des choses différentes ne se gênent jamais. Si elles modifient le même champ, la plus récente l'emporte.
+
+**Trois façons d'envoyer**, au choix :
+1. **Partager le fichier** : le partage du téléphone s'ouvre (WhatsApp, Teams, Mail, AirDrop…).
+2. **E-mail** : la messagerie s'ouvre avec À, Copie et Objet déjà remplis. Le message contient le résumé et le code.
+3. **Message avec le code** (« Autre façon ») : on copie ou on partage un texte, utile quand une messagerie refuse les pièces jointes.
+
+**Deux façons de recevoir**, toujours par le bouton **Recevoir** :
+1. **Choisir un ou plusieurs fichiers**. Sur iPhone, enregistrez d'abord la pièce jointe dans **Fichiers**.
+2. **Coller un ou plusieurs messages** avec le bouton **Coller**. Si la messagerie permet de copier plusieurs messages d'un coup (WhatsApp sur Android, par exemple), le chef les colle ensemble et tous les avancements s'importent en une fois.
+
+---
+
+## Les rôles
+
+| Rôle | Ce qui change dans l'appli |
 |---|---|
-| **Accueil** | Les installations en cours et prévues : avancement, tâches du jour faites, blocages ouverts. |
-| **Journée** | Blocages ouverts et tâches non faites la veille en tête. On coche d'un geste (prénom et heure affichés, « Annuler » quelques secondes), on prend une tâche « En cours » pour éviter les doublons. Fil horodaté de qui a fait quoi. Prévu du lendemain. |
-| **Blocages** | Gravité 1 bloque l'équipe, 2 ralentit, 3 gêne. Qui peut débloquer, échéance, tâche concernée, fil de suivi, levée avec la solution. |
-| **Tâches** | Tâches types de la phase proposées à la création, saisie une par ligne, planification au jour, avancement global. |
-| **Fiche** | Client, machine, phase (installation mécanique → mise en route → accompagnement), contraintes de site, intervenants. |
-| **Point du jour** | Le bilan prêt à copier ou à ouvrir dans la messagerie : fait, reste à faire, blocages, prévu demain, synthèse. Puis clôture de la journée. |
+| **Chef de chantier** | Il crée et envoie le projet, et voit qui a envoyé son avancement. Il prépare et envoie le **point du soir** en PDF. |
+| **Mécanicien, Câbleur, Automaticien** | Le filtre **Mes tâches** montre les tâches de son métier et les tâches communes. **Toutes** montre celles de l'équipe. Le soir : **Mon avancement**. |
+| **Chef d'atelier, Responsable BE électrotechnique, Chef bureau automatisme, Chargé d'affaire** | Ils reçoivent les avancements bloqués et le point du soir. Ils peuvent aussi rejoindre le projet pour le consulter et lever les blocages. |
+| **Autre** | Il voit tout, sans filtre de métier. |
+
+Chacun peut changer de rôle, de prénom ou d'adresse : onglet **Équipe**, **Vous dans ce projet**.
 
 ---
 
-## Mise en ligne, pas à pas (environ 20 minutes)
+## Le point du soir
 
-Il faut un **compte Google** (pour Firebase) et un **compte GitHub**.
+C'est une page A4 au style BFR-Chantier :
+- un bandeau bleu nuit avec la date, l'affaire, la phase et le numéro de jour (J n / N) ;
+- quatre indicateurs : avancement du projet, tâches du jour faites, blocages ouverts, avancements reçus avec le nom de ceux qui manquent ;
+- **Fait aujourd'hui**, par personne et avec l'heure ;
+- **Reste à faire** ;
+- **Points bloquants**, avec la gravité, qui peut lever, l'échéance, depuis quand et le dernier suivi ;
+- **Prévu** le jour ouvré suivant ;
+- **Équipe et avancements du soir** ;
+- **Synthèse du chef de chantier**.
 
-### 1. Créer le projet Firebase
+**Aperçu du PDF** le montre à l'écran avant l'envoi. Les destinataires proposés sont les responsables dont l'adresse est connue, en commençant par ceux qui doivent lever un blocage ouvert. Le document est **interne** : il n'est pas prévu pour le client.
 
-1. Ouvrir **https://console.firebase.google.com** et se connecter avec le compte Google.
-2. **Créer un projet** → nom au choix (par exemple `chantier-partage`) → Google Analytics n'est **pas** nécessaire.
-3. Rester sur l'offre gratuite **Spark** : aucune carte bancaire n'est demandée.
+---
 
-### 2. Activer la connexion par e-mail
+## Mise en ligne sur GitHub Pages (10 minutes)
 
-1. Dans le menu de gauche : **Authentication** → **Commencer**.
-2. Onglet **Méthode de connexion** (*Sign-in method*) → **Adresse e-mail/Mot de passe** → **Activer** (le premier interrupteur seulement, pas « Lien envoyé par e-mail ») → **Enregistrer**.
+Il faut seulement un **compte GitHub**. Il n'y a ni Firebase ni configuration à faire.
 
-### 3. Créer la base et poser les règles de sécurité
+1. Sur GitHub, ouvrez **New repository**. Donnez-lui un nom (par exemple `chantier-equipe`), choisissez **Public** (GitHub Pages gratuit l'exige), puis **Create repository**.
+2. Ouvrez **Add file**, **Upload files**. Glissez **tout le contenu** du dossier décompressé : les fichiers, le dossier `icons` et le fichier `.nojekyll` (voir la note). Ne glissez pas le dossier lui-même. Terminez par **Commit changes**.
+3. Ouvrez **Settings**, **Pages**. Dans *Source*, choisissez **Deploy from a branch**, puis la branche **`main`** et le dossier **`/ (root)`**. Cliquez **Save**.
+4. Une à deux minutes plus tard, l'adresse s'affiche : `https://<votre-compte>.github.io/<nom-du-dépôt>/`. Envoyez-la à l'équipe avec le fichier `INSTALLATION-COLLEGUES.md`.
 
-1. Menu de gauche : **Firestore Database** → **Créer une base de données**.
-   - Si la console demande l'édition : **Standard** (c'est elle qui a l'offre gratuite, le direct et le hors connexion).
-   - Emplacement : en Europe, par exemple `europe-west9 (Paris)` ou `eur3`. **Ce choix est définitif.**
-   - Démarrer en **mode production**.
-2. Onglet **Règles** : effacer tout, coller le contenu du fichier **`firestore.rules`** de ce dépôt.
-3. **Avant de publier**, remplacer dans la fonction `proprietaire()` l'adresse `votre.adresse@exemple.fr` par **votre propre adresse**, en minuscules. C'est elle qui aura toujours accès et qui pourra ajouter les autres.
-4. **Publier**.
+> **Note.** Sur Mac et Windows, les fichiers dont le nom commence par un point sont masqués. Le fichier `.nojekyll` n'est pas indispensable : sans lui, GitHub Pages fonctionne aussi pour cette appli.
 
-> Ne remettez pas votre adresse dans le fichier `firestore.rules` du dépôt GitHub si le dépôt est public : la version qui compte est celle publiée dans la console Firebase.
-
-### 4. Déclarer l'application Web et copier sa configuration
-
-1. Roue dentée en haut à gauche → **Paramètres du projet** → onglet **Général**.
-2. Dans **Vos applications**, cliquer l'icône **Web** (`</>`) → donner un nom → **ne pas** cocher Firebase Hosting → **Enregistrer l'application**.
-3. Firebase affiche un bloc `const firebaseConfig = { ... }`. Recopier les six valeurs (`apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`) dans le fichier **`config-firebase.js`**, à la place des valeurs d'exemple.
-
-> Ces valeurs ne sont pas secrètes : elles disent seulement à quel projet l'appli se connecte. La protection des données repose sur les règles (étape 3) et sur la liste des adresses autorisées.
-
-### 5. Publier sur GitHub Pages
-
-1. Sur GitHub : **New repository** → nom (par exemple `chantier-partage`) → **Public** (GitHub Pages gratuit l'exige) → **Create repository**.
-2. **Add file → Upload files** → glisser **tout le contenu** du dossier décompressé (les fichiers **et** le dossier `icons`), pas le dossier lui-même → **Commit changes**.
-3. **Settings → Pages** → *Source* : **Deploy from a branch** → branche **`main`**, dossier **`/ (root)`** → **Save**.
-4. Une à deux minutes plus tard, l'adresse s'affiche en haut de la page : `https://<votre-compte>.github.io/<nom-du-dépôt>/`.
-
-### 6. Autoriser l'adresse GitHub dans Firebase
-
-**Authentication → Paramètres** (*Settings*) → **Domaines autorisés** → **Ajouter un domaine** → `<votre-compte>.github.io`.
-
-Sans cela, l'e-mail de validation part quand même, mais sans le bouton qui ramène vers l'appli.
-
-### 7. Premier lancement : vous devenez administrateur
-
-1. Ouvrir l'adresse GitHub Pages sur le téléphone.
-2. **Créer mon compte** avec **l'adresse mise dans les règles** (étape 3) et un mot de passe propre à cette appli.
-3. Ouvrir l'e-mail reçu, cliquer le lien de validation, revenir dans l'appli → **J'ai validé mon adresse**.
-4. L'appli vous inscrit automatiquement comme **administrateur** et vous demande votre prénom et votre métier.
-5. Installer l'appli sur l'écran d'accueil (voir `INSTALLATION-COLLEGUES.md`).
-
-### 8. Ajouter des collègues
-
-1. **Menu → Accès à l'appli** → saisir l'adresse e-mail du collègue → rôle **Membre** (ou **Administrateur** pour qu'il puisse, lui aussi, ajouter des gens) → **Ajouter**.
-2. **Copier** le lien de l'appli (même écran) et le lui envoyer, avec le fichier `INSTALLATION-COLLEGUES.md`.
-3. Il crée son compte **avec cette adresse exacte**, valide l'e-mail reçu, et arrive directement sur les installations.
-
-Pour retirer quelqu'un : même écran → **Retirer** → **Confirmer**. Il perd l'accès aussitôt.
+> **Le dépôt est public, mais pas les données.** Seule l'application est sur GitHub. Les projets restent dans les téléphones et ne vont que là où vous les envoyez.
 
 ---
 
 ## Mettre à jour l'application
 
-1. Modifier les fichiers, puis les renvoyer sur GitHub (**Add file → Upload files**, en remplaçant les anciens).
-2. Dans **`sw.js`**, augmenter le numéro de `CACHE` (par exemple `chantier-partage-1.0.1`) : les anciens fichiers en cache sont alors nettoyés.
-3. Chaque téléphone prend la nouvelle version **à sa prochaine ouverture avec du réseau**. Si un téléphone reste en retard, le rouvrir une seconde fois suffit. Les données ne sont pas touchées : elles sont dans Firebase.
+1. Renvoyez les fichiers modifiés sur GitHub (**Add file**, **Upload files**, en remplaçant les anciens).
+2. Dans **`sw.js`**, augmentez le numéro de `CACHE` (par exemple `chantier-partage-local-2.0.1`) pour faire le ménage dans les anciens fichiers.
+3. Chaque téléphone prend la nouvelle version **à sa prochaine ouverture avec du réseau**. Les projets ne sont pas touchés.
 
-Le numéro de version en cours s'affiche en bas du **Menu**.
+Le numéro de version s'affiche en bas du **Menu**.
 
 ---
 
-## Données, sécurité, gratuité
+## Données et confidentialité
 
-- **Où sont les données ?** Dans la base Firestore de votre projet Firebase (Google), dans la région choisie à l'étape 3. Contrairement à BFR-Report et BFR-Chantier, elles ne restent pas que dans les téléphones : c'est ce qui permet le partage. Chaque téléphone en garde une copie pour travailler hors connexion.
-- **Qui y accède ?** Uniquement les comptes dont l'adresse e-mail est **validée** et **présente dans la liste « membres »** (plus le propriétaire désigné dans les règles). C'est vérifié par Firebase, côté serveur, à chaque lecture et chaque écriture.
-- **Mots de passe** : gérés par Firebase Authentication, jamais stockés dans l'appli. Conseillez à chacun un mot de passe propre à cette appli. « Mot de passe oublié » envoie un lien de réinitialisation.
-- **Ce qu'il faut éviter d'y mettre** : tout ce que votre entreprise ne veut pas voir hors de ses murs. Vérifiez avec elle ce qui peut y figurer (noms de clients, contraintes de site, etc.).
-- **Gratuité** : l'offre Spark de Firestore inclut chaque jour 50 000 lectures, 20 000 écritures et 20 000 suppressions, plus 1 Gio de stockage. C'est très large pour une équipe de chantier. Si une limite est atteinte, l'appli le signale et tout reprend le lendemain. Ne passez pas à l'offre payante Blaze sans le vouloir.
-- **Optionnel, pour aller plus loin** : dans la console Google Cloud (*API et services → Identifiants*), restreindre la clé d'API aux sites `https://<votre-compte>.github.io/*` et `https://<projet>.firebaseapp.com/*`.
+- **Où sont les données ?** Dans chaque téléphone, dans la base locale du navigateur (IndexedDB). Elles n'en sortent que dans les fichiers ou les messages que vous envoyez.
+- **Par où passent les envois ?** Par la messagerie choisie : WhatsApp, Teams, e-mail… Vérifiez avec l'entreprise ce qui peut y transiter (noms de clients, contraintes de site, etc.).
+- **Aucun compte, aucun suivi.** La seule ressource extérieure est la police de caractères (Google Fonts). Pour s'en passer, retirez les trois lignes `fonts.googleapis.com` / `fonts.gstatic.com` de `index.html`. L'appli prendra alors la police du téléphone.
+- **Sauvegarde** : chaque fichier envoyé ou reçu est une copie complète du projet. L'onglet **Fiche**, bouton **Sauvegarder**, enregistre aussi une sauvegarde `.json` sur le téléphone. Pour restaurer, utilisez **Recevoir** avec n'importe quel fichier récent du projet.
+
+---
+
+## Limites à connaître
+
+- **Pas de direct.** On voit le travail des autres à chaque import. C'est le prix du « sans serveur ».
+- **L'heure du téléphone compte un peu.** Une modification faite après avoir reçu celle d'un collègue l'emporte toujours, même si les deux téléphones ne sont pas à la même heure. En revanche, les heures affichées (« faite à 14:32 ») viennent de chaque téléphone. Gardez l'heure automatique partout.
+- **iPhone : Safari et l'icône de l'écran d'accueil ont chacun leurs données.** Utilisez toujours la même entrée, l'icône. L'appli fonctionne aussi en navigation normale, mais **pas en navigation privée**, où rien n'est gardé.
+- **Retirer un projet** d'un téléphone (onglet Fiche) ne le retire pas chez les autres. **Supprimer une tâche ou un blocage**, en revanche, se propage à tous au fil des échanges.
+- **La taille du code grandit avec le projet** : environ 2 300 caractères pour 15 tâches, quelques dizaines de milliers pour un gros projet. Au-delà, préférez le fichier au message, car les SMS sont trop courts.
 
 ---
 
@@ -115,42 +135,25 @@ Le numéro de version en cours s'affiche en bas du **Menu**.
 
 | Ce que vous voyez | Cause probable et solution |
 |---|---|
-| « Configuration Firebase à compléter » | `config-firebase.js` contient encore les valeurs d'exemple (étape 4). |
-| « Firebase n'a pas pu être chargé » | Pas de réseau à la toute première ouverture. Ouvrir une fois avec internet. |
-| « La connexion par e-mail n'est pas activée dans Firebase » | Étape 2 à faire. |
-| Vous êtes le propriétaire et l'appli affiche « Accès en attente » | L'adresse dans la fonction `proprietaire()` des règles n'est pas la vôtre, ou les règles n'ont pas été publiées (étape 3). Corriger, publier, puis **Réessayer**. |
-| Un collègue voit « Accès en attente » | Son adresse n'est pas dans **Menu → Accès à l'appli**, ou il a créé son compte avec une autre adresse. |
-| L'e-mail de validation n'arrive pas | Regarder dans les courriers indésirables, puis **Renvoyer l'e-mail**. Les modèles d'e-mail se règlent dans **Authentication → Modèles**. |
-| « J'ai validé » ne passe pas | Le lien de l'e-mail n'a pas encore été ouvert, ou il a expiré : **Renvoyer l'e-mail**. |
-| « Limite gratuite de Firebase atteinte » | Quota du jour dépassé : tout reprend le lendemain. |
-| Le téléphone affiche une ancienne version | Le rouvrir avec du réseau, une seconde fois si besoin. |
+| « Ce fichier n'est pas un fichier de Chantier partagé » | Mauvais fichier choisi (un PDF, une photo…). Choisissez le `.txt` reçu. |
+| « Code abîmé » ou « Un code est incomplet » | Message coupé par la messagerie (SMS notamment). Envoyez plutôt le fichier, ou copiez le message en entier. |
+| « Ce fichier vient d'une version plus récente de l'appli » | Rouvrez l'appli avec du réseau pour qu'elle se mette à jour. |
+| **Partager le fichier** télécharge au lieu d'ouvrir le partage | Le navigateur ne sait pas partager (c'est le cas de certains ordinateurs). Joignez le fichier téléchargé à votre message. |
+| Le bouton **Coller** ne fait rien | Le téléphone a refusé l'accès au presse-papiers. Appuyez longuement dans la zone de texte, puis **Coller**. |
+| Un collègue apparaît « Rien reçu » | Son avancement du jour n'a pas encore été importé sur ce téléphone. |
+| Les projets ont disparu | Vous êtes peut-être en navigation privée, dans un autre navigateur, ou dans Safari au lieu de l'icône. Sinon, réimportez n'importe quel fichier récent du projet. |
 
 ---
 
-## Structure du dépôt
+## Fichiers du dépôt
 
-```
-index.html              la page de l'application
-style.css               charte (cyan #06baf2, bleu nuit #332e72, bleu ardoise, rouge sourd)
-app.js                  l'application : écrans, connexion, accès, synchronisation
-config-firebase.js      ← la configuration de VOTRE projet Firebase (étape 4)
-firestore.rules         règles de sécurité à coller dans la console Firebase (étape 3)
-sw.js                   fonctionnement hors connexion (service worker)
-manifest.json           installation sur l'écran d'accueil
-icons/                  icônes de l'application
-INSTALLATION-COLLEGUES.md   le guide à envoyer aux collègues
-.nojekyll               dit à GitHub Pages de servir les fichiers tels quels (facultatif)
-```
-
-Organisation de la base Firestore :
-
-```
-membres/{adresse e-mail}          adresses autorisées, rôle membre ou admin
-equipe/{identifiant du compte}    prénom et métier de chacun
-installations/{id}                fiche de l'installation
-  taches/{id}                     tâches : jour prévu, état, qui, quand
-  blocages/{id}                   points bloquants et leur suivi
-  jours/{AAAA-MM-JJ}              synthèse et clôture de la journée
-```
-
-Aucune dépendance à installer : Firebase (version **12.19.0**) est chargé depuis le site officiel de Google (`www.gstatic.com/firebasejs/`), puis gardé en cache pour le hors connexion. Pour changer de version, modifier `VERSION_FIREBASE` en tête de `app.js`.
+| Fichier | Rôle |
+|---|---|
+| `index.html` | La page de l'application |
+| `style.css` | Charte BFR (cyan, bleu nuit, Poppins et Open Sans), thème sombre automatique |
+| `modele.js` | Le cœur : projets, fusion champ par champ, règle d'envoi, textes, codes |
+| `pdf.js` | Moteur PDF de BFR-Chantier, repris tel quel |
+| `rapport.js` | Mise en page du point du soir (PDF et aperçu à l'écran) |
+| `app.js` | Les écrans et les échanges |
+| `sw.js`, `manifest.json`, `icons/` | Installation sur l'écran d'accueil et fonctionnement hors connexion |
+| `INSTALLATION-COLLEGUES.md` | Le mode d'emploi à envoyer à l'équipe |

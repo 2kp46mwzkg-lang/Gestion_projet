@@ -1,8 +1,8 @@
 {
-  "id": "chantier-partage",
+  "id": "chantier-partage-local",
   "name": "Chantier partagé — suivi d'installation en équipe",
   "short_name": "Chantier",
-  "description": "Tâches du jour à cocher, points bloquants et point du jour, partagés en direct par toute l'équipe. Fonctionne hors connexion.",
+  "description": "Tâches du jour à cocher, points bloquants, avancement du soir et point du soir en PDF. Sans serveur : tout reste dans le téléphone, l'équipe s'échange des fichiers.",
   "lang": "fr",
   "start_url": "./",
   "scope": "./",

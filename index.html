@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#332e72">
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="Suivi d'installation machine en équipe : tâches du jour à cocher, points bloquants et point du jour, partagés en direct.">
+<meta name="description" content="Suivi d'installation machine en équipe, sans serveur : chacun coche ses tâches, signale les blocages et envoie son avancement le soir ; le chef envoie le point du soir en PDF.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,7 +23,7 @@
 <body>
 <div id="app">
   <header class="topbar" id="topbar"></header>
-  <nav class="onglets" id="onglets" aria-label="Sections de l'installation" hidden></nav>
+  <nav class="onglets" id="onglets" aria-label="Sections du projet" hidden></nav>
   <main class="contenu" id="contenu">
     <section class="carte"><p class="vide-texte">Ouverture de l'application…</p></section>
   </main>
@@ -31,8 +31,10 @@
 </div>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript><p style="padding:16px">Cette application a besoin de JavaScript.</p></noscript>
-<!-- Configuration de VOTRE projet Firebase (voir README, étape 4) -->
-<script src="config-firebase.js"></script>
-<script type="module" src="app.js"></script>
+<!-- Ordre important : le modèle, le moteur PDF (repris de BFR-Chantier), le point du soir, puis l'appli -->
+<script src="modele.js"></script>
+<script src="pdf.js"></script>
+<script src="rapport.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

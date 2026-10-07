@@ -1,18 +1,17 @@
 /* =========================================================================
-   Service worker — Chantier partagé : fonctionnement hors connexion
+   Service worker — Chantier partagé (sans serveur) : fonctionnement hors connexion
    -------------------------------------------------------------------------
    · Fichiers de l'appli : réseau d'abord (une nouvelle version est prise dès
      la prochaine ouverture avec du réseau), puis le cache. Au-delà de 3,5 s
      sans réponse du réseau, le cache est servi sans attendre.
-   · Firebase (www.gstatic.com/firebasejs/<version>/) et polices : cache
-     d'abord, car ces fichiers ne changent jamais pour une version donnée.
-   · Les échanges avec la base Firestore et la connexion ne passent pas par
-     ici : Firestore garde lui-même ses données hors connexion.
+   · Polices Google : cache d'abord, elles ne changent pas.
+   · Les données ne passent jamais par ici : elles restent dans le téléphone
+     (IndexedDB) et voyagent dans les fichiers que l'équipe s'envoie.
    À chaque publication, augmentez le numéro de CACHE pour faire le ménage.
    ========================================================================= */
-const CACHE = 'chantier-partage-1.0.0';
-const CACHE_EXTERNE = 'chantier-partage-externe';
-const FICHIERS = ['./', './index.html', './style.css', './app.js', './config-firebase.js', './manifest.json',
+const CACHE = 'chantier-partage-local-2.0.0';
+const CACHE_EXTERNE = 'chantier-partage-local-externe';
+const FICHIERS = ['./', './index.html', './style.css', './modele.js', './pdf.js', './rapport.js', './app.js', './manifest.json',
   './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon.png'];
 const DELAI_RESEAU = 3500;
 
@@ -28,7 +27,7 @@ function servir(requete, estPage) {
   }).catch(() => null);
 
   return Promise.race([reseau, delai(DELAI_RESEAU)]).then((vite) =>
-    vite || caches.match(requete)
+    vite || caches.match(requete, { ignoreSearch: true })
       .then((c) => c || (estPage ? caches.match('./') : null))
       .then((c) => c || reseau)
       .then((c) => c || new Response('Hors connexion', { status: 503, headers: { 'Content-Type': 'text/plain; charset=utf-8' } }))
@@ -63,7 +62,5 @@ self.addEventListener('fetch', (e) => {
     e.respondWith(servir(e.request, e.request.mode === 'navigate'));
     return;
   }
-  const externe = (url.hostname === 'www.gstatic.com' && url.pathname.startsWith('/firebasejs/')) ||
-    url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com';
-  if (externe) e.respondWith(cacheDabord(e.request));
+  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') e.respondWith(cacheDabord(e.request));
 });
